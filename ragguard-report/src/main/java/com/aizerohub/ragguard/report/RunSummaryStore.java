@@ -14,6 +14,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,6 +29,9 @@ public final class RunSummaryStore {
     /** The file name of the latest-run summary inside the report output directory. */
     public static final String FILE_NAME = "ragguard-latest-run.json";
 
+    /** Append-only history file (one JSON object per run) for the trend chart. */
+    public static final String HISTORY_FILE_NAME = "ragguard-history.jsonl";
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private RunSummaryStore() {
@@ -35,6 +39,7 @@ public final class RunSummaryStore {
 
     public static void write(Path outputDir, RunSummary summary) {
         ObjectNode root = MAPPER.createObjectNode();
+        root.put("timestamp", summary.timestamp().toString());
         root.put("caseCount", summary.caseCount());
         ObjectNode aggregates = root.putObject("aggregateScores");
         summary.aggregateScores().forEach((type, score) -> aggregates.put(type.name(), score));
@@ -48,9 +53,49 @@ public final class RunSummaryStore {
             Files.writeString(outputDir.resolve(FILE_NAME),
                     MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(root),
                     StandardCharsets.UTF_8);
+            appendHistory(outputDir, root);
         } catch (IOException e) {
             throw new UncheckedIOException("cannot write run summary to " + outputDir, e);
         }
+    }
+
+    /** Appends one compact line (timestamp + aggregates) to the history file. */
+    private static void appendHistory(Path outputDir, ObjectNode fullRun) throws IOException {
+        ObjectNode line = MAPPER.createObjectNode();
+        line.put("timestamp", fullRun.get("timestamp").asText());
+        line.set("aggregateScores", fullRun.get("aggregateScores"));
+        line.put("caseCount", fullRun.get("caseCount").asInt());
+        Files.writeString(outputDir.resolve(HISTORY_FILE_NAME),
+                MAPPER.writeValueAsString(line) + "\n",
+                StandardCharsets.UTF_8, java.nio.file.StandardOpenOption.CREATE,
+                java.nio.file.StandardOpenOption.APPEND);
+    }
+
+    /** Reads the append-only history, oldest first. Unparseable lines are skipped. */
+    public static java.util.List<RunSummary> readHistory(Path outputDir) {
+        Path file = outputDir.resolve(HISTORY_FILE_NAME);
+        if (!Files.isRegularFile(file)) {
+            return java.util.List.of();
+        }
+        java.util.List<RunSummary> history = new java.util.ArrayList<>();
+        try {
+            for (String lineContent : Files.readAllLines(file, StandardCharsets.UTF_8)) {
+                if (lineContent.isBlank()) {
+                    continue;
+                }
+                try {
+                    JsonNode node = MAPPER.readTree(lineContent);
+                    Map<MetricType, Double> scores = readScores(node.get("aggregateScores"));
+                    history.add(new RunSummary(Instant.parse(node.path("timestamp").asText()),
+                            scores, java.util.Map.of(), node.path("caseCount").asInt()));
+                } catch (RuntimeException ignored) {
+                    // tolerate a torn/corrupt line — trend charts are best-effort
+                }
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException("cannot read run history from " + file, e);
+        }
+        return java.util.List.copyOf(history);
     }
 
     public static Optional<RunSummary> read(Path outputDir) {
@@ -68,7 +113,9 @@ public final class RunSummaryStore {
                         cases.put(name, readScores(caseNode.get(name))));
             }
             int caseCount = root.path("caseCount").asInt(cases.size());
-            return Optional.of(new RunSummary(aggregates, cases, caseCount));
+            String ts = root.path("timestamp").asText(null);
+            Instant timestamp = ts == null ? Instant.now() : Instant.parse(ts);
+            return Optional.of(new RunSummary(timestamp, aggregates, cases, caseCount));
         } catch (IOException e) {
             throw new UncheckedIOException("cannot read run summary from " + file, e);
         }
@@ -87,6 +134,10 @@ public final class RunSummaryStore {
 
     /** Extracts the persisted summary from a fresh evaluation report. */
     public static RunSummary from(EvaluationReport report) {
+        return from(report, Instant.now());
+    }
+
+    public static RunSummary from(EvaluationReport report, Instant timestamp) {
         Map<MetricType, Double> aggregates = new LinkedHashMap<>();
         for (MetricType type : MetricType.values()) {
             double score = report.aggregateScore(type);
@@ -104,6 +155,6 @@ public final class RunSummaryStore {
             }
             cases.put(caseResult.caseId(), scores);
         }
-        return new RunSummary(aggregates, cases, report.caseCount());
+        return new RunSummary(timestamp, aggregates, cases, report.caseCount());
     }
 }

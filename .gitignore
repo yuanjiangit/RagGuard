@@ -23,6 +23,7 @@ Thumbs.db
 # Logs / local reports
 *.log
 ragguard-reports/
+ragguard-judge-cache.yml
 
 # Secrets — never commit API keys
 *.env

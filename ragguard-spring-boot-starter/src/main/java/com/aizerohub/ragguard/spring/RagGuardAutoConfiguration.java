@@ -43,7 +43,13 @@ public class RagGuardAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(Judge.class)
-    public SpringAiJudge ragGuardJudge(ChatModel chatModel) {
+    public SpringAiJudge ragGuardJudge(ChatModel chatModel, RagGuardProperties properties) {
+        if (properties.isJudgeCacheEnabled()) {
+            return new SpringAiJudge(chatModel, 3,
+                    new com.aizerohub.ragguard.core.judge.FileJudgeCache(
+                            java.nio.file.Path.of(properties.getJudgeCacheFile())),
+                    properties.getJudgeModelId());
+        }
         return new SpringAiJudge(chatModel);
     }
 

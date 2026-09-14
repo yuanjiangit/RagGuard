@@ -6,7 +6,9 @@
 
 > RagGuard 是一个面向 JVM 生态的 RAG 应用质量保障框架：把 RAG 评估写成单元测试 —— 效果回退，代码就合并不进去，而不是数周后靠用户投诉才发现。
 
-**状态：🚧 M3 —— 双生态 + 增长功能。** 测试集自动生成、langchain4j 适配、GitHub Action 与双框架示例全部就绪；0.1.0 发布工程见 [docs/release.md](docs/release.md)。欢迎 Watch/Star 一起见证。
+**状态：🚧 M4 —— 打磨与加固。** 判定缓存（成本杠杆）、报告指标趋势图、中文文档、成本估算全部就绪；0.1.0 发布清单见 [docs/release.md](docs/release.md)。欢迎 Watch/Star 一起见证。
+
+**文档：** [中文快速上手](docs/zh/getting-started.md) · [成本估算](docs/cost-estimation.md) · [设计笔记](docs/design/) · [GitHub Action](action/README.md)
 
 ## 快速上手（三步）
 

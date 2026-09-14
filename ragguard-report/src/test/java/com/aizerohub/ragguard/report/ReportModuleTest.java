@@ -67,6 +67,25 @@ class ReportModuleTest {
     }
 
     @Test
+    void reportWriter_trendChartAppearsFromSecondRun() throws Exception {
+        ReportWriter writer = new ReportWriter(tempDir, "Trend Run");
+        Path first = writer.write(report(0.9));
+        assertTrue(!Files.readString(first).contains("<svg"), "first run has no trend yet");
+        Path second = writer.write(report(0.7));
+        String content = Files.readString(second);
+        assertTrue(content.contains("<svg"), "trend SVG appears from the second run");
+        assertTrue(content.contains("Trend"));
+        // history file has one line per run
+        Path historyFile = tempDir.resolve(RunSummaryStore.HISTORY_FILE_NAME);
+        assertEquals(2, Files.readAllLines(historyFile).size());
+        // history roundtrip: both runs readable, oldest first
+        var history = RunSummaryStore.readHistory(tempDir);
+        assertEquals(2, history.size());
+        assertEquals(0.9, history.get(0).aggregate(MetricType.FAITHFULNESS), 1e-9);
+        assertEquals(0.7, history.get(1).aggregate(MetricType.FAITHFULNESS), 1e-9);
+    }
+
+    @Test
     void htmlEscaping_preventsInjection() throws Exception {
         MetricResult result = MetricResult.builder(MetricType.FAITHFULNESS).score(0.0)
                 .claimVerdicts(List.of(new ClaimVerdict(new Claim("<script>alert(1)</script>"),

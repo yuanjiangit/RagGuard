@@ -6,7 +6,9 @@
 
 > RagGuard is a quality-assurance framework for RAG applications on the JVM: it turns RAG evaluation into unit tests, so a quality regression blocks the merge — instead of being discovered weeks later by user complaints.
 
-**Status: 🚧 M3 — dual-ecosystem + growth features.** Test-set generation from documents, langchain4j adapter, GitHub Action and both framework demos are in place; release engineering for 0.1.0 is documented in [docs/release.md](docs/release.md). Watch/star to follow along.
+**Status: 🚧 M4 — polish & hardening.** Judge response caching (cost lever), metric trend charts in HTML reports, Chinese docs, cost estimation — all in; the release checklist for 0.1.0 is in [docs/release.md](docs/release.md). Watch/star to follow along.
+
+**Docs:** [Quick start](#quick-start-3-steps) · [中文快速上手](docs/zh/getting-started.md) · [Cost estimation](docs/cost-estimation.md) · [Design notes](docs/design/) · [GitHub Action](action/README.md)
 
 ## Quick start (3 steps)
 

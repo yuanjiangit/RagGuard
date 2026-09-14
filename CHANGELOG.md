@@ -10,6 +10,15 @@ during the 0.x phase with a "move fast" caveat: APIs may change between 0.x rele
 
 ### Added
 
+- **Judge response cache (M4)**: `JudgeCache` / `FileJudgeCache` in core — raw judge
+  responses cached by (model id, prompt version, input hash); wired into both the Spring AI
+  and langchain4j judges; malformed responses are never frozen into the cache. Starter
+  config: `ragguard.judge-cache-enabled`, `ragguard.judge-cache-file`, `ragguard.judge-model-id`.
+- **Trend chart (M4)**: HTML reports now embed an inline SVG of aggregate metric scores
+  across all runs, backed by the append-only `ragguard-history.jsonl`.
+- **Docs (M4)**: Chinese quick-start guide (`docs/zh/getting-started.md`), cost estimation
+  with token model and saving levers (`docs/cost-estimation.md`), retrospective draft
+  (`docs/retrospective-draft.md`).
 - **Test-set generation (M3)**: `TestSetGenerator` / `TestSetWriter` in core —
   paragraph-boundary chunking, LLM QA generation with grounding constraints,
   two-level dedup (normalized text + optional embedding near-duplicate),

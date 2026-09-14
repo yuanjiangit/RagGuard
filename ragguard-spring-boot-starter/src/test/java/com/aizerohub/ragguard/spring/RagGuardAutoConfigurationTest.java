@@ -72,11 +72,16 @@ class RagGuardAutoConfigurationTest {
                     context.getBean(RagGuardFacade.class).run();
                     assertThat(tempDir).exists();
                     try (var files = java.nio.file.Files.list(tempDir)) {
-                        assertThat(files.count()).isEqualTo(2); // latest-run json + html
+                        assertThat(files.count()).isEqualTo(3); // latest-run json + history jsonl + html
                     }
                     try (var files = java.nio.file.Files.list(tempDir)) {
-                        assertThat(files.findFirst().orElseThrow().getFileName().toString())
-                                .matches("ragguard-report-\\d{8}-\\d{6}\\.html|ragguard-latest-run\\.json");
+                        var names = files.map(p -> p.getFileName().toString()).toList();
+                        org.assertj.core.api.Assertions.assertThat(names)
+                                .contains("ragguard-latest-run.json", "ragguard-history.jsonl");
+                        assertThat(names.stream()
+                                .filter(n -> n.startsWith("ragguard-report-"))
+                                .findFirst().orElseThrow())
+                                .matches("ragguard-report-\\d{8}-\\d{6}\\.html");
                     }
                 });
     }

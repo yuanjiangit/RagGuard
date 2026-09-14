@@ -35,6 +35,18 @@ public class RagGuardProperties {
     /** Title shown in the HTML report. */
     private String reportTitle = "RagGuard Evaluation Report";
 
+    /** Enables the judge response cache (keyed by model + prompt version + input). */
+    private boolean judgeCacheEnabled = false;
+
+    /** Cache file location (YAML); relative to the working directory. */
+    private String judgeCacheFile = "ragguard-judge-cache.yml";
+
+    /**
+     * Model identity participating in the cache key (e.g. "gpt-4o-mini") —
+     * cached verdicts are reused only for the same model.
+     */
+    private String judgeModelId = "default";
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -81,5 +93,29 @@ public class RagGuardProperties {
 
     public void setReportTitle(String reportTitle) {
         this.reportTitle = reportTitle;
+    }
+
+    public boolean isJudgeCacheEnabled() {
+        return judgeCacheEnabled;
+    }
+
+    public void setJudgeCacheEnabled(boolean judgeCacheEnabled) {
+        this.judgeCacheEnabled = judgeCacheEnabled;
+    }
+
+    public String getJudgeCacheFile() {
+        return judgeCacheFile;
+    }
+
+    public void setJudgeCacheFile(String judgeCacheFile) {
+        this.judgeCacheFile = judgeCacheFile;
+    }
+
+    public String getJudgeModelId() {
+        return judgeModelId;
+    }
+
+    public void setJudgeModelId(String judgeModelId) {
+        this.judgeModelId = judgeModelId;
     }
 }

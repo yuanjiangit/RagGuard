@@ -28,12 +28,19 @@ public final class ReportWriter {
 
     /**
      * Writes the report and returns the HTML file path. The run-over-run
-     * diff compares against the summary persisted by the previous call.
+     * diff compares against the summary persisted by the previous call, and
+     * the trend chart includes all prior runs recorded in the history file.
      */
     public Path write(EvaluationReport report) {
-        Optional<RunSummary> previous = RunSummaryStore.read(outputDir);
-        String html = renderer.render(report, previous.orElse(null));
-        RunSummaryStore.write(outputDir, RunSummaryStore.from(report));
+        java.util.List<RunSummary> history = RunSummaryStore.readHistory(outputDir);
+        RunSummary previous = history.isEmpty() ? null : history.get(history.size() - 1);
+        RunSummary current = RunSummaryStore.from(report);
+        java.util.List<RunSummary> priorRuns = new java.util.ArrayList<>(history);
+        if (previous != null && previous.timestamp().equals(current.timestamp())) {
+            priorRuns = priorRuns.subList(0, priorRuns.size() - 1); // avoid double-plotting same run
+        }
+        String html = renderer.render(report, previous, priorRuns);
+        RunSummaryStore.write(outputDir, current);
         String fileName = "ragguard-report-"
                 + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))
                 + ".html";

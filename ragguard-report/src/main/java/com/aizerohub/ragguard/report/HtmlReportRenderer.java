@@ -31,6 +31,14 @@ public final class HtmlReportRenderer {
     }
 
     public String render(EvaluationReport report, RunSummary previousRun) {
+        return render(report, previousRun, java.util.List.of());
+    }
+
+    /**
+     * @param history prior runs (oldest first) for the trend chart; current run excluded
+     */
+    public String render(EvaluationReport report, RunSummary previousRun,
+                         java.util.List<RunSummary> history) {
         StringBuilder html = new StringBuilder(16 * 1024);
         html.append("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n")
                 .append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n")
@@ -38,6 +46,7 @@ public final class HtmlReportRenderer {
                 .append(STYLES).append("</head>\n<body>\n");
         header(html, report);
         aggregateTable(html, report, previousRun);
+        trendChart(html, report, history);
         caseTable(html, report, previousRun);
         drillDown(html, report);
         html.append("</body>\n</html>\n");
@@ -62,6 +71,76 @@ public final class HtmlReportRenderer {
                     .append("</td><td>").append(diffCell(previous, type, score)).append("</td></tr>\n");
         }
         html.append("</table>\n");
+    }
+
+    /** Inline SVG trend of aggregate scores across runs (including the current one). */
+    private void trendChart(StringBuilder html, EvaluationReport report, java.util.List<RunSummary> history) {
+        if (history.isEmpty()) {
+            return; // trend appears from the second run on
+        }
+        int width = 640;
+        int height = 240;
+        int padLeft = 40;
+        int padBottom = 26;
+        int padTop = 12;
+        // runs: history + current run (rendered from the report itself)
+        java.util.List<double[]> series = new java.util.ArrayList<>(); // per metric: y values in [0,1]
+        java.util.List<String> colors = java.util.List.of("#2b6cb0", "#38a169", "#d69e2e", "#9b2c2c");
+        java.util.List<String> labels = java.util.List.of("faithfulness", "answer relevance",
+                "context recall", "context precision");
+        MetricType[] types = MetricType.values();
+        int points = history.size() + 1;
+        for (int t = 0; t < types.length; t++) {
+            double[] ys = new double[points];
+            for (int i = 0; i < history.size(); i++) {
+                Double v = history.get(i).aggregate(types[t]);
+                ys[i] = v == null ? Double.NaN : v;
+            }
+            double current = report.aggregateScore(types[t]);
+            ys[points - 1] = Double.isNaN(current) ? Double.NaN : current;
+            series.add(ys);
+        }
+        StringBuilder svg = new StringBuilder();
+        svg.append("<svg viewBox=\"0 0 ").append(width).append(' ').append(height)
+                .append("\" width=\"100%\" role=\"img\" aria-label=\"metric trend\">");
+        // gridlines at 0, .25, .5, .75, 1
+        for (double g : new double[] {0, 0.25, 0.5, 0.75, 1}) {
+            int y = padTop + (int) Math.round((1 - g) * (height - padTop - padBottom));
+            svg.append("<line x1=\"").append(padLeft).append("\" y1=\"").append(y)
+                    .append("\" x2=\"").append(width - 8).append("\" y2=\"").append(y)
+                    .append("\" stroke=\"#e2e8f0\"/>");
+            svg.append("<text x=\"8\" y=\"").append(y + 4).append("\" font-size=\"10\" fill=\"#718096\">")
+                    .append(g).append("</text>");
+        }
+        double step = points == 1 ? 0 : (double) (width - padLeft - 16) / (points - 1);
+        for (int t = 0; t < series.size(); t++) {
+            double[] ys = series.get(t);
+            StringBuilder path = new StringBuilder();
+            boolean started = false;
+            for (int i = 0; i < ys.length; i++) {
+                if (Double.isNaN(ys[i])) {
+                    continue;
+                }
+                int x = padLeft + (int) Math.round(i * step);
+                int y = padTop + (int) Math.round((1 - ys[i]) * (height - padTop - padBottom));
+                path.append(started ? " L" : "M").append(x).append(' ').append(y);
+                started = true;
+            }
+            if (started) {
+                svg.append("<path d=\"").append(path).append("\" fill=\"none\" stroke=\"")
+                        .append(colors.get(t % colors.size())).append("\" stroke-width=\"2\"/>");
+            }
+        }
+        // legend + run markers under the axis
+        for (int t = 0; t < labels.size(); t++) {
+            int lx = padLeft + t * 150;
+            svg.append("<rect x=\"").append(lx).append("\" y=\"").append(height - 12)
+                    .append("\" width=\"10\" height=\"3\" fill=\"").append(colors.get(t % colors.size()))
+                    .append("\"/><text x=\"").append(lx + 14).append("\" y=\"").append(height - 6)
+                    .append("\" font-size=\"10\" fill=\"#4a5568\">").append(labels.get(t)).append("</text>");
+        }
+        svg.append("</svg>");
+        html.append("<h2>Trend</h2>\n<div class=\"trend\">").append(svg).append("</div>\n");
     }
 
     private void caseTable(StringBuilder html, EvaluationReport report, RunSummary previous) {
