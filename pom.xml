@@ -46,7 +46,9 @@
     <module>ragguard-junit5</module>
     <module>ragguard-report</module>
     <module>ragguard-spring-boot-starter</module>
+    <module>ragguard-langchain4j</module>
     <module>examples/spring-ai-es-demo</module>
+    <module>examples/langchain4j-demo</module>
   </modules>
 
   <properties>

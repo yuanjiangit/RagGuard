@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  End-to-end demo (M3): langchain4j + RagGuard without Spring. Evaluation
+  uses the ragguard-junit5 extension with supplier annotations; requires
+  OPENAI_API_KEY to RUN — CI only compiles it.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.aizerohub.ragguard</groupId>
+    <artifactId>ragguard</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>langchain4j-demo</artifactId>
+  <name>RagGuard :: Example :: langchain4j</name>
+  <description>End-to-end RagGuard demo with langchain4j, evaluated via the JUnit 5 extension.</description>
+
+  <properties>
+    <langchain4j.version>1.0.0</langchain4j.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.aizerohub.ragguard</groupId>
+      <artifactId>ragguard-langchain4j</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.aizerohub.ragguard</groupId>
+      <artifactId>ragguard-junit5</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j</artifactId>
+      <version>${langchain4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>dev.langchain4j</groupId>
+      <artifactId>langchain4j-open-ai</artifactId>
+      <version>${langchain4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

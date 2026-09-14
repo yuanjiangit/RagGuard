@@ -48,6 +48,12 @@ public class RagGuardAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(com.aizerohub.ragguard.core.generate.QuestionGenerator.class)
+    public SpringAiQuestionGenerator ragGuardQuestionGenerator(ChatModel chatModel) {
+        return new SpringAiQuestionGenerator(chatModel);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(EmbeddingModel.class)
     @ConditionalOnBean(org.springframework.ai.embedding.EmbeddingModel.class)
     public SpringAiEmbeddingAdapter ragGuardEmbeddingModel(

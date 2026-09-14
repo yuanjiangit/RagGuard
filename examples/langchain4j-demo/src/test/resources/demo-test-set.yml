@@ -1,0 +1,10 @@
+testCases:
+  - id: q1
+    question: What is RagGuard?
+    expectedAnswer: RagGuard is a quality-assurance framework for RAG applications on the JVM that turns RAG evaluation into unit tests with four Ragas-paper metrics.
+  - id: q2
+    question: What are the four RagGuard metrics?
+    expectedAnswer: Faithfulness, answer relevance, context recall and context precision.
+  - id: q3
+    question: What does RagGuard do when judge output cannot be parsed?
+    expectedAnswer: It marks the metric JUDGE_FAILED instead of silently producing a score.

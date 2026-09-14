@@ -6,7 +6,7 @@
 
 > RagGuard is a quality-assurance framework for RAG applications on the JVM: it turns RAG evaluation into unit tests, so a quality regression blocks the merge — instead of being discovered weeks later by user complaints.
 
-**Status: 🚧 M2 — MVP feature-complete.** Core engine, JUnit 5 extension, Spring Boot starter, HTML reports and an end-to-end example are all in place; release engineering for 0.1.0 is documented in [docs/release.md](docs/release.md). Watch/star to follow along.
+**Status: 🚧 M3 — dual-ecosystem + growth features.** Test-set generation from documents, langchain4j adapter, GitHub Action and both framework demos are in place; release engineering for 0.1.0 is documented in [docs/release.md](docs/release.md). Watch/star to follow along.
 
 ## Quick start (3 steps)
 
@@ -45,6 +45,16 @@ class MyRagRegressionTest {
 
 Set `ragguard.report-output-dir` and every run also writes a self-contained HTML report with a diff against the previous run. See [examples/spring-ai-es-demo](examples/spring-ai-es-demo) for a full Spring AI + Elasticsearch application.
 
+**Don't want to hand-write test cases?** Generate candidates from your documents (LLM + dedup, human-confirmed):
+
+```java
+TestSetGenerator generator = TestSetGenerator.builder(new SpringAiQuestionGenerator(chatModel)).build();
+List<GeneratedTestCase> candidates = generator.generate(Map.of("docs.md", documentText));
+Files.writeString(Path.of("candidates.yml"), TestSetWriter.toYaml(candidates)); // review, then use
+```
+
+Run RagGuard on every pull request with the ready-made GitHub Action ([action/](action/README.md)) — it fails the PR on quality regressions and comments the metric summary.
+
 ## Why
 
 The Python world has Ragas / DeepEval / TruLens. The Java world has frameworks to *build* RAG applications (Spring AI, langchain4j) — but nothing to *verify* them. When a team swaps the embedding model, changes the chunking strategy, or tweaks a prompt, the quality delta today is measured by vibes.
@@ -62,9 +72,10 @@ RagGuard closes that gap:
 
 | Module | Purpose |
 |---|---|
-| `ragguard-core` | Metric engine, test-set model, judge abstraction — framework-free |
+| `ragguard-core` | Metric engine, test-set model, judge abstraction, test-set generation — framework-free |
 | `ragguard-junit5` | `@RagTest` / `RagAssertions` JUnit 5 extension |
-| `ragguard-spring-boot-starter` | Spring AI auto-configuration |
+| `ragguard-spring-boot-starter` | Spring AI auto-configuration (judge, embedding, test-set generator) |
+| `ragguard-langchain4j` | langchain4j adapter (judge + embedding) |
 | `ragguard-report` | Self-contained HTML reports |
 
 ## Roadmap

@@ -6,7 +6,7 @@
 
 > RagGuard 是一个面向 JVM 生态的 RAG 应用质量保障框架：把 RAG 评估写成单元测试 —— 效果回退，代码就合并不进去，而不是数周后靠用户投诉才发现。
 
-**状态：🚧 M2 —— MVP 功能齐备。** 核心引擎、JUnit 5 扩展、Spring Boot starter、HTML 报告与端到端示例全部就绪；0.1.0 发布工程见 [docs/release.md](docs/release.md)。欢迎 Watch/Star 一起见证。
+**状态：🚧 M3 —— 双生态 + 增长功能。** 测试集自动生成、langchain4j 适配、GitHub Action 与双框架示例全部就绪；0.1.0 发布工程见 [docs/release.md](docs/release.md)。欢迎 Watch/Star 一起见证。
 
 ## 快速上手（三步）
 
@@ -45,6 +45,16 @@ class MyRagRegressionTest {
 
 配置 `ragguard.report-output-dir` 后，每次评估还会生成自包含的 HTML 报告，并自动与上次运行对比。完整可运行的 Spring AI + Elasticsearch 示例见 [examples/spring-ai-es-demo](examples/spring-ai-es-demo)。
 
+**不想手写测试题？** 从你的文档自动生成候选（LLM 生成 + 去重 + 人工确认）：
+
+```java
+TestSetGenerator generator = TestSetGenerator.builder(new SpringAiQuestionGenerator(chatModel)).build();
+List<GeneratedTestCase> candidates = generator.generate(Map.of("docs.md", documentText));
+Files.writeString(Path.of("candidates.yml"), TestSetWriter.toYaml(candidates)); // 人审后使用
+```
+
+用现成的 GitHub Action（[action/](action/README.md)）在每次 PR 上跑评估 —— 效果回退直接拦下，并自动评论指标摘要。
+
 ## 为什么做
 
 Python 世界有 Ragas / DeepEval / TruLens 一整层评估生态；Java 世界只有"搭 RAG"的框架（Spring AI、langchain4j），没有"验证 RAG"的框架。换 embedding 模型、改切分策略、调 Prompt 之后，效果变化全靠人工"感觉"。
@@ -62,9 +72,10 @@ RagGuard 补上这一层：
 
 | 模块 | 说明 |
 |---|---|
-| `ragguard-core` | 指标引擎、测试集模型、judge 抽象 —— 不依赖任何框架 |
+| `ragguard-core` | 指标引擎、测试集模型、judge 抽象、测试集生成 —— 不依赖任何框架 |
 | `ragguard-junit5` | `@RagTest` / `RagAssertions` JUnit 5 扩展 |
-| `ragguard-spring-boot-starter` | Spring AI 自动装配 |
+| `ragguard-spring-boot-starter` | Spring AI 自动装配（judge、嵌入、测试集生成器） |
+| `ragguard-langchain4j` | langchain4j 适配（judge + 嵌入） |
 | `ragguard-report` | 自包含 HTML 报告 |
 
 ## 路线图

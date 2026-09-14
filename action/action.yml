@@ -1,0 +1,65 @@
+name: 'RagGuard evaluation'
+description: >-
+  Run RagGuard evaluation tests on a pull request and comment the metric
+  summary (with run-over-run diff) on the PR.
+author: 'RagGuard'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  java-version:
+    description: 'JDK version used to build and run the evaluation'
+    required: false
+    default: '17'
+  maven-command:
+    description: >-
+      Maven command that runs the RagGuard evaluation (usually `mvn verify`
+      or `mvn test -Dtest=YourRagEvaluationTest`)
+    required: false
+    default: 'mvn -B --no-transfer-progress verify'
+  report-dir:
+    description: >-
+      Directory where the evaluated project writes its report output
+      (ragguard.report-output-dir); must contain ragguard-latest-run.json
+    required: false
+    default: 'ragguard-reports'
+  comment-on-pr:
+    description: 'Post the metric summary as a PR comment (requires actions/checkout with fetch-depth 0 and GITHUB_TOKEN)'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ inputs.java-version }}
+        cache: maven
+
+    - name: Run RagGuard evaluation
+      shell: bash
+      run: ${{ inputs.maven-command }}
+
+    - name: Summarize report
+      if: ${{ inputs.comment-on-pr == 'true' }}
+      shell: bash
+      run: |
+        python3 "${{ github.action_path }}/scripts/summarize.py" \
+          "${{ inputs.report-dir }}" > ragguard-summary.md
+        cat ragguard-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+    - name: Comment on PR
+      if: ${{ inputs.comment-on-pr == 'true' }}
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+      run: |
+        if [ -z "$PR_NUMBER" ]; then
+          echo "Skipping PR comment (no pull request context)"
+        else
+          gh pr comment "$PR_NUMBER" --body-file ragguard-summary.md
+        fi
