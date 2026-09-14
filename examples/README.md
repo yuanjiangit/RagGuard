@@ -1,7 +1,10 @@
-# Examples
+# RagGuard Examples
 
-Runnable examples live here. The first end-to-end demo lands in M2:
+Two runnable demos, one per ecosystem. Both evaluate a small RAG pipeline against a YAML test set and are **skipped in CI without credentials** (they call real LLMs).
 
-- `spring-ai-es-demo/` — Spring AI + Elasticsearch hybrid retrieval (BM25 + vector + RRF) over a small knowledge base, with a YAML test set and CI configuration. **Coming in M2.**
+| Demo | Stack | Evaluation route |
+|---|---|---|
+| [`spring-ai-es-demo/`](spring-ai-es-demo/README.md) | Spring Boot + Spring AI + Elasticsearch vector store | starter auto-configuration + `@SpringBootTest` |
+| [`langchain4j-demo/`](langchain4j-demo/README.md) | langchain4j 1.0, **no Spring** | `@RagTest` JUnit 5 extension with supplier annotations |
 
-Until then, this directory is intentionally (almost) empty — see the [root README](../README.md) for the roadmap.
+Both demos use a small built-in knowledge base about RagGuard itself — the project eats its own dog food. See the [docs index](../docs/README.md) for configuration and metric details.

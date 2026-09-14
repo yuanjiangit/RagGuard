@@ -1,14 +1,17 @@
 # RagGuard
 
+[![CI](https://github.com/yuanjiangit/RagGuard/actions/workflows/ci.yml/badge.svg)](https://github.com/yuanjiangit/RagGuard/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 **你的 RAG 变好还是变坏了，不该靠感觉。**
 
-[English](README.md) | [设计笔记（指标算法）](docs/design/01-ragas-metrics-notes.md)
+[English](README.md) | [文档索引](docs/README.md) | [中文快速上手](docs/zh/getting-started.md) | [设计笔记](docs/design/01-ragas-metrics-notes.md)
 
 > RagGuard 是一个面向 JVM 生态的 RAG 应用质量保障框架：把 RAG 评估写成单元测试 —— 效果回退，代码就合并不进去，而不是数周后靠用户投诉才发现。
 
 **状态：🚧 M4 —— 打磨与加固。** 判定缓存（成本杠杆）、报告指标趋势图、中文文档、成本估算全部就绪；0.1.0 发布清单见 [docs/release.md](docs/release.md)。欢迎 Watch/Star 一起见证。
 
-**文档：** [中文快速上手](docs/zh/getting-started.md) · [成本估算](docs/cost-estimation.md) · [设计笔记](docs/design/) · [GitHub Action](action/README.md)
+**文档：** [文档索引](docs/README.md) · [中文快速上手](docs/zh/getting-started.md) · [成本估算](docs/cost-estimation.md) · [架构](docs/architecture.md) · [配置参考](docs/configuration.md) · [测试集格式](docs/test-set-format.md) · [设计笔记](docs/design/)
 
 ## 快速上手（三步）
 
@@ -80,6 +83,8 @@ RagGuard 补上这一层：
 | `ragguard-langchain4j` | langchain4j 适配（judge + 嵌入） |
 | `ragguard-report` | 自包含 HTML 报告 |
 
+模块依赖关系与扩展点见[架构文档](docs/architecture.md)（英文）。
+
 ## 路线图
 
 | 里程碑 | 范围 |
@@ -93,7 +98,7 @@ RagGuard 补上这一层：
 ## 本地构建
 
 ```bash
-mvn verify
+./mvnw verify
 ```
 
 需要 JDK 17+。CI 在每次 push 和 PR 上执行同样的命令。

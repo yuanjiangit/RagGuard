@@ -1,14 +1,17 @@
 # RagGuard
 
+[![CI](https://github.com/yuanjiangit/RagGuard/actions/workflows/ci.yml/badge.svg)](https://github.com/yuanjiangit/RagGuard/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 **Stop guessing. Regression-test your RAG.**
 
-[中文文档](README.zh-CN.md) | [设计笔记（指标算法）](docs/design/01-ragas-metrics-notes.md)
+[中文文档](README.zh-CN.md) | [Docs index](docs/README.md) | [Architecture](docs/architecture.md) | [Metrics](docs/metrics.md) | [中文快速上手](docs/zh/getting-started.md)
 
 > RagGuard is a quality-assurance framework for RAG applications on the JVM: it turns RAG evaluation into unit tests, so a quality regression blocks the merge — instead of being discovered weeks later by user complaints.
 
 **Status: 🚧 M4 — polish & hardening.** Judge response caching (cost lever), metric trend charts in HTML reports, Chinese docs, cost estimation — all in; the release checklist for 0.1.0 is in [docs/release.md](docs/release.md). Watch/star to follow along.
 
-**Docs:** [Quick start](#quick-start-3-steps) · [中文快速上手](docs/zh/getting-started.md) · [Cost estimation](docs/cost-estimation.md) · [Design notes](docs/design/) · [GitHub Action](action/README.md)
+**Docs:** [Docs index](docs/README.md) · [Architecture](docs/architecture.md) · [Metrics reference](docs/metrics.md) · [Test set format](docs/test-set-format.md) · [Configuration](docs/configuration.md) · [中文快速上手](docs/zh/getting-started.md) · [Cost estimation](docs/cost-estimation.md) · [Design notes](docs/design/)
 
 ## Quick start (3 steps)
 
@@ -80,6 +83,8 @@ RagGuard closes that gap:
 | `ragguard-langchain4j` | langchain4j adapter (judge + embedding) |
 | `ragguard-report` | Self-contained HTML reports |
 
+See [docs/architecture.md](docs/architecture.md) for the module map, data flow and extension points.
+
 ## Roadmap
 
 | Milestone | Scope |
@@ -93,7 +98,7 @@ RagGuard closes that gap:
 ## Building from source
 
 ```bash
-mvn verify
+./mvnw verify
 ```
 
 Requires JDK 17+. CI runs the same command on every push and PR.

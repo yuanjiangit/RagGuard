@@ -12,15 +12,27 @@ Thanks for your interest! RagGuard is a young project — issues, discussions an
 ## Development
 
 ```bash
-mvn verify          # full build + tests (JDK 17+)
-mvn -pl ragguard-core test   # single module
+./mvnw verify        # full build + tests (JDK 17+; on Windows set JAVA_HOME to a JDK 17+ first)
+./mvnw -pl ragguard-core test   # single module
 ```
 
 Before opening a PR:
 
-1. `mvn verify` passes locally.
-2. New features come with tests.
+1. `./mvnw verify` passes locally.
+2. New features come with **offline unit tests** — fixed mock judge/embedding outputs, never live API calls.
 3. Reference the [Ragas paper](https://arxiv.org/abs/2309.15217) and the design notes in `docs/design/` when touching metric logic — note in the PR description if you deviate and why.
+
+## Documentation map
+
+| Doc | When to read/update |
+|---|---|
+| [docs/architecture.md](docs/architecture.md) | before changing module boundaries or core abstractions |
+| [docs/metrics.md](docs/metrics.md) | when changing metric semantics — keep the user-facing summary in sync |
+| [docs/test-set-format.md](docs/test-set-format.md) | when touching `TestSetLoader` / `TestSetWriter` |
+| [docs/configuration.md](docs/configuration.md) | when adding properties or extension options |
+| [docs/design/](design/) | before deviating from the documented algorithm decisions |
+
+Language convention: code, comments and API docs in English; tutorials and promotion in Chinese (see `docs/zh/`).
 
 ## Commit style
 

@@ -18,7 +18,9 @@ during the 0.x phase with a "move fast" caveat: APIs may change between 0.x rele
   across all runs, backed by the append-only `ragguard-history.jsonl`.
 - **Docs (M4)**: Chinese quick-start guide (`docs/zh/getting-started.md`), cost estimation
   with token model and saving levers (`docs/cost-estimation.md`), retrospective draft
-  (`docs/retrospective-draft.md`).
+  (`docs/retrospective-draft.md`); full documentation pass — architecture overview,
+  metrics reference, test-set format spec, configuration reference, docs index,
+  per-example READMEs.
 - **Test-set generation (M3)**: `TestSetGenerator` / `TestSetWriter` in core —
   paragraph-boundary chunking, LLM QA generation with grounding constraints,
   two-level dedup (normalized text + optional embedding near-duplicate),
