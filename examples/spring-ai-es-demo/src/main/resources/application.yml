@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: spring-ai-es-demo
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          temperature: 0.0
+          model: gpt-4o-mini
+      embedding:
+        options:
+          model: text-embedding-3-small
+    vectorstore:
+      elasticsearch:
+        initialize-schema: true
+        dimensions: 1536
+        similarity: cosine
+        index-name: ragguard-demo
+
+ragguard:
+  test-set: classpath:ragguard-test-set.yml
+  report-output-dir: ragguard-reports
+  report-title: RagGuard Demo — Spring AI + ES
+  parallelism: 2

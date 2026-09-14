@@ -6,7 +6,44 @@
 
 > RagGuard 是一个面向 JVM 生态的 RAG 应用质量保障框架：把 RAG 评估写成单元测试 —— 效果回退，代码就合并不进去，而不是数周后靠用户投诉才发现。
 
-**状态：🚧 M1 —— 核心指标引擎已实现。** 四个 Ragas 论文指标、judge/嵌入抽象、YAML 测试集与 JUnit 5 扩展已在 `ragguard-core` / `ragguard-junit5` 落地，全部可离线验证。Spring Boot starter 与 HTML 报告在 M2（0.1.0）落地。欢迎 Watch/Star 一起见证。
+**状态：🚧 M2 —— MVP 功能齐备。** 核心引擎、JUnit 5 扩展、Spring Boot starter、HTML 报告与端到端示例全部就绪；0.1.0 发布工程见 [docs/release.md](docs/release.md)。欢迎 Watch/Star 一起见证。
+
+## 快速上手（三步）
+
+**1. 引入 starter：**
+
+```xml
+<dependency>
+  <groupId>com.aizerohub.ragguard</groupId>
+  <artifactId>ragguard-spring-boot-starter</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+**2. 把你的 RagChain 定义为 Bean，并准备测试集**（`ragguard-test-set.yml`）：
+
+```yaml
+testCases:
+  - id: q1
+    question: RagGuard 是什么？
+    expectedAnswer: 一个 JVM 生态的 RAG 评估框架。
+```
+
+**3. 写回归测试：**
+
+```java
+@SpringBootTest
+class MyRagRegressionTest {
+    @Autowired RagGuardFacade ragGuard;
+
+    @Test
+    void qualityGate() {
+        RagAssertions.assertMetricAtLeast(ragGuard.run(), MetricType.FAITHFULNESS, 0.8);
+    }
+}
+```
+
+配置 `ragguard.report-output-dir` 后，每次评估还会生成自包含的 HTML 报告，并自动与上次运行对比。完整可运行的 Spring AI + Elasticsearch 示例见 [examples/spring-ai-es-demo](examples/spring-ai-es-demo)。
 
 ## 为什么做
 

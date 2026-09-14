@@ -6,7 +6,44 @@
 
 > RagGuard is a quality-assurance framework for RAG applications on the JVM: it turns RAG evaluation into unit tests, so a quality regression blocks the merge — instead of being discovered weeks later by user complaints.
 
-**Status: 🚧 M1 — core metric engine implemented.** All four Ragas-paper metrics, the judge/embedding abstractions, YAML test sets and the JUnit 5 extension are in `ragguard-core` / `ragguard-junit5`, fully offline-verifiable. Spring Boot starter and HTML reports land in M2 (0.1.0). Watch/star to follow along.
+**Status: 🚧 M2 — MVP feature-complete.** Core engine, JUnit 5 extension, Spring Boot starter, HTML reports and an end-to-end example are all in place; release engineering for 0.1.0 is documented in [docs/release.md](docs/release.md). Watch/star to follow along.
+
+## Quick start (3 steps)
+
+**1. Add the starter:**
+
+```xml
+<dependency>
+  <groupId>com.aizerohub.ragguard</groupId>
+  <artifactId>ragguard-spring-boot-starter</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
+
+**2. Define your chain as a bean and a test set** (`ragguard-test-set.yml`):
+
+```yaml
+testCases:
+  - id: q1
+    question: What is RagGuard?
+    expectedAnswer: A RAG evaluation framework for the JVM.
+```
+
+**3. Write the regression test:**
+
+```java
+@SpringBootTest
+class MyRagRegressionTest {
+    @Autowired RagGuardFacade ragGuard;
+
+    @Test
+    void qualityGate() {
+        RagAssertions.assertMetricAtLeast(ragGuard.run(), MetricType.FAITHFULNESS, 0.8);
+    }
+}
+```
+
+Set `ragguard.report-output-dir` and every run also writes a self-contained HTML report with a diff against the previous run. See [examples/spring-ai-es-demo](examples/spring-ai-es-demo) for a full Spring AI + Elasticsearch application.
 
 ## Why
 

@@ -1,0 +1,7 @@
+testCases:
+  - id: q1
+    question: What is RagGuard?
+    expectedAnswer: A RAG evaluation framework.
+  - id: q2
+    question: Which license does RagGuard use?
+    expectedAnswer: Apache-2.0.

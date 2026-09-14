@@ -18,7 +18,21 @@
 
   <name>RagGuard</name>
   <description>Regression testing framework for RAG applications — faithfulness, answer relevance, context recall and context precision as unit tests.</description>
-  <url>https://github.com/aizerohub/ragguard</url>
+  <url>https://github.com/yuanjiangit/RagGuard</url>
+
+  <scm>
+    <url>https://github.com/yuanjiangit/RagGuard</url>
+    <connection>scm:git:https://github.com/yuanjiangit/RagGuard.git</connection>
+    <developerConnection>scm:git:git@github.com:yuanjiangit/RagGuard.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>yuanjiangit</id>
+      <name>yuanjian</name>
+      <url>https://github.com/yuanjiangit</url>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
@@ -32,6 +46,7 @@
     <module>ragguard-junit5</module>
     <module>ragguard-report</module>
     <module>ragguard-spring-boot-starter</module>
+    <module>examples/spring-ai-es-demo</module>
   </modules>
 
   <properties>
@@ -41,6 +56,7 @@
 
     <junit.version>5.10.2</junit.version>
     <spring-boot.version>3.5.0</spring-boot.version>
+    <spring-ai.version>1.0.0</spring-ai.version>
     <snakeyaml.version>2.2</snakeyaml.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -62,10 +78,27 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.ai</groupId>
+        <artifactId>spring-ai-bom</artifactId>
+        <version>${spring-ai.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <!-- internal modules -->
       <dependency>
         <groupId>com.aizerohub.ragguard</groupId>
         <artifactId>ragguard-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.aizerohub.ragguard</groupId>
+        <artifactId>ragguard-junit5</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.aizerohub.ragguard</groupId>
+        <artifactId>ragguard-report</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
@@ -84,7 +117,82 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.3.1</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.7.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <version>3.2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.6.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
+
+  <profiles>
+    <!--
+      Release profile for publishing to Maven Central via the Sonatype
+      Central Portal. See docs/release.md for the full checklist.
+      Usage: mvn -P release clean deploy
+    -->
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals><goal>jar-no-fork</goal></goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals><goal>jar</goal></goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals><goal>sign</goal></goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <publishingServerId>central</publishingServerId>
+              <autoPublish>true</autoPublish>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

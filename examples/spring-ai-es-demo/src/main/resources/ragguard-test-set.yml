@@ -1,0 +1,16 @@
+testCases:
+  - id: q1
+    question: What is RagGuard?
+    expectedAnswer: RagGuard is a quality-assurance framework for RAG applications on the JVM that turns RAG evaluation into unit tests with four Ragas-paper metrics and an LLM-as-Judge.
+  - id: q2
+    question: What happens when a metric score drops below its threshold?
+    expectedAnswer: The build fails, so the quality regression is caught in the pull request instead of weeks later by user complaints.
+  - id: q3
+    question: How does RagGuard keep judge results reliable?
+    expectedAnswer: It runs the judge at temperature 0 with structured JSON output, retries once with an explicit only-JSON instruction on parse failure, and marks JUDGE_FAILED instead of silently scoring.
+  - id: q4
+    question: What four metrics does RagGuard implement?
+    expectedAnswer: Faithfulness, answer relevance, context recall and context precision.
+  - id: q5
+    question: Does RagGuard call the judge for blank answers?
+    expectedAnswer: No, blank answers and empty context lists never trigger a judge call.

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ragguard-spring-boot-starter — Spring AI auto-configuration.
-  Users add this starter, inject their own RagChain, and get
-  evaluation out of the box. All Spring dependencies are isolated here;
-  ragguard-core stays framework-free.
+  Users add this starter, define their own RagChain bean, and get a
+  RagGuardFacade wired with an LLM judge and embedding adapter out of
+  the box. All Spring dependencies are isolated here; ragguard-core
+  stays framework-free.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -26,8 +27,16 @@
       <artifactId>ragguard-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.aizerohub.ragguard</groupId>
+      <artifactId>ragguard-report</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-client-chat</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -35,8 +44,8 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
