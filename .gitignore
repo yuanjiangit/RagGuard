@@ -1,0 +1,30 @@
+# Build
+target/
+*.class
+*.jar
+!**/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / local reports
+*.log
+ragguard-reports/
+
+# Secrets — never commit API keys
+*.env
+application-local.yml
+application-local.yaml

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ragguard-spring-boot-starter — Spring AI auto-configuration.
+  Users add this starter, inject their own RagChain, and get
+  evaluation out of the box. All Spring dependencies are isolated here;
+  ragguard-core stays framework-free.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.aizerohub.ragguard</groupId>
+    <artifactId>ragguard</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>ragguard-spring-boot-starter</artifactId>
+  <name>RagGuard :: Spring Boot Starter</name>
+  <description>Spring Boot starter with Spring AI auto-configuration for RagGuard evaluation.</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.aizerohub.ragguard</groupId>
+      <artifactId>ragguard-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>

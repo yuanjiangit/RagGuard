@@ -1,0 +1,11 @@
+# Normalize line endings: keep LF in the repo (mvnw scripts are CRLF-sensitive)
+* text=auto eol=lf
+
+# Windows scripts must keep CRLF in the working copy
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binaries
+*.jar binary
+*.png binary
+*.gif binary
