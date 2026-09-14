@@ -1,0 +1,9 @@
+testCases:
+  - id: q1
+    question: What is RagGuard?
+    expectedAnswer: RagGuard is a regression testing framework for RAG applications.
+    expectedContexts:
+      - RagGuard turns RAG evaluation into unit tests.
+  - id: q2
+    question: Which metrics does RagGuard implement?
+    expectedAnswer: Faithfulness, answer relevance, context recall and context precision.

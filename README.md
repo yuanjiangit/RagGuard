@@ -6,7 +6,7 @@
 
 > RagGuard is a quality-assurance framework for RAG applications on the JVM: it turns RAG evaluation into unit tests, so a quality regression blocks the merge — instead of being discovered weeks later by user complaints.
 
-**Status: 🚧 project bootstrap (M0).** The metric engine lands in M1; the first runnable release (0.1.0) is targeted for M2. Watch/star to follow along.
+**Status: 🚧 M1 — core metric engine implemented.** All four Ragas-paper metrics, the judge/embedding abstractions, YAML test sets and the JUnit 5 extension are in `ragguard-core` / `ragguard-junit5`, fully offline-verifiable. Spring Boot starter and HTML reports land in M2 (0.1.0). Watch/star to follow along.
 
 ## Why
 
